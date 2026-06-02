@@ -1,0 +1,12 @@
+{
+  "name": "memory-search",
+  "description": "RAG answer synthesis over retrieved journal chunks",
+  "defaultVersion": "v1",
+  "versions": {
+    "v1": {
+      "description": "Strict grounding, explicit missing-info handling, JSON output contract",
+      "system": "system.md",
+      "user": "user.md"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  chunks    Chunk[]
+
+  @@map("journal_entries")
+}
+
+model Chunk {
+  id        String                 @id @default(cuid())
+  entryId   String                 @map("entry_id")
+  content   String                 @db.Text
+  index     Int
+  embedding Unsupported("vector(384)")?
+  entry     JournalEntry           @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId])
+  @@map("chunks")
+}
