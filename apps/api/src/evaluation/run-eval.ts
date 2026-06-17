@@ -3,61 +3,80 @@
  * Usage: pnpm eval (requires DATABASE_URL and seeded data for live retrieval tests)
  */
 import { loadEnv } from '@memrider/database';
+import { PrismaModule } from '@memrider/database/lib';
+import { EvaluationService, JournalModule } from '@memrider/journal';
+import { AppConfigService } from '@memrider/shared';
+import {
+  AppLogger,
+  createStandaloneAppLogger,
+  LoggerModule,
+} from '@memrider/shared/logging';
+import { Module } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 
 loadEnv();
 
-import { MemoryAnswerSchema } from '@memrider/shared';
-import { EvaluationService } from './evaluation.service';
-import { EmbeddingService } from '../embeddings/embedding.service';
-import { RetrievalService } from '../retrieval/retrieval.service';
-import { PrismaService } from '../database/prisma.service';
 import retrievalFixture from './fixtures/retrieval-eval.json';
 
+@Module({
+  imports: [LoggerModule, JournalModule, PrismaModule],
+})
+class EvalCliModule {}
+
 async function main() {
-  const prisma = new PrismaService();
-  await prisma.onModuleInit();
+  const app = await NestFactory.createApplicationContext(EvalCliModule, {
+    logger: false,
+  });
+  const logger = app.get(AppLogger);
+  const appConfigService = app.get(AppConfigService);
+  const evaluationService = app.get(EvaluationService);
 
-  const embeddings = new EmbeddingService();
-  await embeddings.onModuleInit();
-
-  const retrieval = new RetrievalService(prisma, embeddings);
-  const evaluation = new EvaluationService(retrieval);
-
-  const schemaSample = MemoryAnswerSchema.parse({
+  const schemaSampleRaw = {
     answer: 'Test answer grounded in memory.',
     supportingChunkIds: ['chunk-1'],
     confidence: 'medium',
-  });
-  evaluation.validateStructuredOutput(schemaSample);
-  console.log('✓ structured output schema validation');
+  };
 
-  const hallucination = evaluation.checkHallucination(schemaSample, ['chunk-1']);
+  const schemaSample = evaluationService.validateStructuredOutput(schemaSampleRaw);
+
+  logger.log('✓ structured output schema validation', 'EvalCli');
+
+  const hallucination = evaluationService.checkHallucination(schemaSample, ['chunk-1']);
+
   if (!hallucination.valid) {
     throw new Error(hallucination.errors.join('; '));
   }
-  console.log('✓ hallucination guard (valid references)');
 
-  const bad = evaluation.checkHallucination(
+  logger.log('✓ hallucination guard (valid references)', 'EvalCli');
+
+  const bad = evaluationService.checkHallucination(
     { ...schemaSample, supportingChunkIds: ['phantom'] },
     ['chunk-1'],
   );
-  if (bad.valid) throw new Error('expected hallucination detection failure');
-  console.log('✓ hallucination guard (rejects phantom chunk ids)');
 
-  const cases = evaluation.parseDataset(retrievalFixture);
-  if (process.env.RUN_LIVE_EVAL === '1') {
-    const report = await evaluation.runRetrievalEval(cases, 5);
-    console.log(`retrieval_hit_rate: ${report.retrievalHitRate}`);
-    console.log(JSON.stringify(report.results, null, 2));
+  if (bad.valid) throw new Error('expected hallucination detection failure');
+
+  logger.log('✓ hallucination guard (rejects phantom chunk ids)', 'EvalCli');
+
+  const cases = evaluationService.parseDataset(retrievalFixture);
+
+  if (appConfigService.evaluation.runLiveEval) {
+    const report = await evaluationService.runRetrievalEval(cases, 5);
+    logger.log(`retrieval_hit_rate: ${report.retrievalHitRate}`, 'EvalCli');
+    logger.log(JSON.stringify(report.results, null, 2), 'EvalCli');
   } else {
-    console.log('⊘ live retrieval eval skipped (set RUN_LIVE_EVAL=1 with seeded DB)');
+    logger.log(
+      '⊘ live retrieval eval skipped (set RUN_LIVE_EVAL=1 with seeded DB)',
+      'EvalCli',
+    );
   }
 
-  await prisma.onModuleDestroy();
-  console.log('Evaluation checks complete.');
+  await app.close();
+  logger.log('Evaluation checks complete.', 'EvalCli');
 }
 
 main().catch((err) => {
-  console.error(err);
+  const message = err instanceof Error ? err.stack ?? err.message : String(err);
+  createStandaloneAppLogger().error(message, undefined, 'EvalCli');
   process.exit(1);
 });

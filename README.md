@@ -34,10 +34,19 @@ flowchart LR
 
 
 
-| Layer     | Responsibility                                           |
-| --------- | -------------------------------------------------------- |
-| **Local** | Chunking, embedding (Xenova/all-MiniLM-L6-v2), retrieval |
-| **Cloud** | Answer synthesis only (Amazon Bedrock)                   |
+| Layer     | Responsibility                                        |
+| --------- | ----------------------------------------------------- |
+| **Local** | Chunking, embedding (`EMBEDDING_MODEL_ID`), retrieval |
+| **Cloud** | Answer synthesis only (Amazon Bedrock)                |
+
+
+
+| Package             | Role                                                     |
+| ------------------- | -------------------------------------------------------- |
+| `apps/api`          | HTTP controllers, eval CLI (`eval:seed`, `eval`, sync)   |
+| `packages/journal`  | Journal domain: entries, chunks, retrieval, RAG, prompts |
+| `packages/database` | Prisma schema and migrations                             |
+| `packages/shared`   | Config, Zod API contracts                                |
 
 
 ## Monorepo layout
@@ -59,27 +68,32 @@ packages/
 docker compose up -d
 ```
 
-- Postgres + pgvector: `localhost:5432`
-- pgAdmin: `http://localhost:5050` ([admin@memrider.local](mailto:admin@memrider.local) / admin)
+- Postgres
+- pgAdmin (see env vars for url and credentials)
 
 ### 2. Install & migrate
-
-Requires **Node.js ≥ 20.19** (Prisma 7; `.nvmrc` pins 22).
 
 ```bash
 cp .env.example .env
 pnpm install
 pnpm db:generate
-pnpm db:migrate
+pnpm db:deploy
 ```
 
-Optional seed for eval:
+`db:deploy` applies the existing migrations in `packages/database/prisma/migrations/` (tables, pgvector, HNSW index). Use `pnpm db:migrate` only when **changing** the Prisma schema — that runs `prisma migrate dev`, which can prompt for a new migration name.
+
+Optional eval seed and fixture sync:
 
 ```bash
-pnpm --filter @memrider/database seed
+pnpm --filter @memrider/api eval:seed
+pnpm --filter @memrider/api eval:sync-fixture
 ```
 
-**Prisma + pgvector:** keep using migrations; review generated SQL so Prisma does not drop the HNSW index. See [packages/database/MIGRATIONS.md](packages/database/MIGRATIONS.md).
+**`eval:seed`** loads eval journal entries through the same `ChunkingService` + embed path as `POST /entries`. 
+
+`eval:sync-fixture` reads [retrieval-eval.spec.json](apps/api/src/evaluation/fixtures/retrieval-eval.spec.json), resolves chunk IDs from the seeded DB, and writes [retrieval-eval.json](apps/api/src/evaluation/fixtures/retrieval-eval.json). Run both after a DB reset, before `RUN_LIVE_EVAL=1 pnpm eval`.
+
+**Prisma + pgvector migrations:** review generated SQL so Prisma does not drop the HNSW index. See [packages/database/MIGRATIONS.md](packages/database/MIGRATIONS.md).
 
 ### 3. Run
 
@@ -120,7 +134,26 @@ Built-in checks (not external-only):
 - **Retrieval hit rate** — `relevant_chunks_found / total_queries`
 - **Hallucination guard** — `supportingChunkIds` must ⊆ retrieved chunk IDs
 - **Schema validation** — `MemoryAnswerSchema` (Zod)
-- **Regression** — `pnpm test` + `pnpm eval`
+- **Regression** — `pnpm --filter @memrider/journal test` + `pnpm eval`
+
+### Retrieval eval fixtures
+
+Two files, two roles:
+
+
+| File                                                                                  | Maintained by | Contents                                                          |
+| ------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------- |
+| [retrieval-eval.spec.json](apps/api/src/evaluation/fixtures/retrieval-eval.spec.json) | You (in git)  | Test queries, `seedKey`, and which chunk index should match       |
+| [retrieval-eval.json](apps/api/src/evaluation/fixtures/retrieval-eval.json)           | Generated     | Same queries with concrete `expectedChunkIds` from the current DB |
+
+
+After seeding or resetting the database, sync the generated file:
+
+```bash
+pnpm --filter @memrider/api eval:sync-fixture
+```
+
+The script finds each seed entry by its `[memrider-seed:…]` marker, maps `expectedChunkIndexes` to chunk rows (same order as `ChunkingService` output), and overwrites `retrieval-eval.json`. Without this step, live eval compares queries against stale chunk IDs from a previous seed.
 
 Live retrieval eval against DB:
 
@@ -128,14 +161,14 @@ Live retrieval eval against DB:
 RUN_LIVE_EVAL=1 pnpm eval
 ```
 
-Update [apps/api/src/evaluation/fixtures/retrieval-eval.json](apps/api/src/evaluation/fixtures/retrieval-eval.json) with real chunk IDs after seeding.
+Commit changes to `retrieval-eval.spec.json` when you add cases; commit `retrieval-eval.json` too if you want CI or other devs to skip the sync step after seed.
 
 ## Prompt management
 
 Prompts live as **versioned files**, not hard-coded strings:
 
 ```
-apps/api/prompt-registry/memory-search/
+packages/journal/prompt-registry/memory-search/
   manifest.json      # versions + default
   v1/
     system.md        # system instructions
@@ -145,7 +178,7 @@ apps/api/prompt-registry/memory-search/
 Switch the active version without code changes:
 
 ```bash
-PROMPT_MEMORY_SEARCH_VERSION=v1   # default in manifest.json
+PROMPT_VERSION=v1   # default in manifest.json
 ```
 
 To add `v2`, create `v1/` copies, edit, register in `manifest.json`, then set the env var. Search responses and logs include `meta.promptName` and `meta.promptVersion` for regression tracking.
@@ -156,8 +189,4 @@ Each `/search` request logs JSON: query, prompt version, retrieved chunk IDs, si
 
 ## Bedrock
 
-Set `AWS_REGION`, `BEDROCK_MODEL_ID`, and `AWS_BEARER_TOKEN_BEDROCK` (Bedrock API key). Nova models use the Converse API with bearer auth. Without these, the API uses a **deterministic mock LLM** that still returns valid structured JSON.
-
-## Non-goals (V1)
-
-No agents, workflows, emotion taxonomies, memory graphs, or multi-step reasoning chains.
+All configuration is required at startup (see `.env.example`) and validated against enums in `@memrider/shared` (e.g. `EMBEDDING_DIMENSION=384` only). Add new enum values when changing models, regions, or prompt sets. For synthesis, set `AWS_REGION`, `BEDROCK_MODEL_ID`, `AWS_BEARER_TOKEN_BEDROCK`, and `AWS_AUTH_SCHEME_PREFERENCE`. Nova models use the Converse API with bearer auth.

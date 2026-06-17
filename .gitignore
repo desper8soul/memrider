@@ -8,3 +8,4 @@ packages/database/src/generated
 .DS_Store
 coverage
 .turbo
+*.tsbuildinfo

@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ChunkingService } from '../chunks/chunking.service';
-import { ChunksService } from '../chunks/chunks.service';
+import { JournalModule } from '@memrider/journal';
 import { EntriesController } from './entries.controller';
-import { EntriesService } from './entries.service';
 
 @Module({
+  imports: [JournalModule],
   controllers: [EntriesController],
-  providers: [EntriesService, ChunksService, ChunkingService],
-  exports: [EntriesService, ChunksService],
 })
 export class EntriesModule {}

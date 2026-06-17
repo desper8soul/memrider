@@ -1,6 +1,104 @@
 [
   {
+    "query": "What weight did I squat today?",
+    "expectedChunkIds": [
+      "cmqe32v220001r16tnvdomzi7"
+    ]
+  },
+  {
+    "query": "When is the parking ticket appeal deadline?",
+    "expectedChunkIds": [
+      "cmqe32v330003r16tqkg2x37x"
+    ]
+  },
+  {
     "query": "How did I feel during the Maldives trip?",
-    "expectedChunkIds": ["cmpduxo8u00046tjkc7m0hwst"]
+    "expectedChunkIds": [
+      "cmqe32v3u0005r16tvhpzjm54"
+    ]
+  },
+  {
+    "query": "What did I write about leaving the Maldives?",
+    "expectedChunkIds": [
+      "cmqe32v3u0005r16tvhpzjm54"
+    ]
+  },
+  {
+    "query": "What supplement did Dr. Patel recommend for low ferritin?",
+    "expectedChunkIds": [
+      "cmqe32v4p0007r16t82iq6sal"
+    ]
+  },
+  {
+    "query": "What changes did Dr. Patel suggest for improving sleep?",
+    "expectedChunkIds": [
+      "cmqe32v4p0007r16t82iq6sal"
+    ]
+  },
+  {
+    "query": "What is the goal of Memrider V1 regarding retrieval and LLM usage?",
+    "expectedChunkIds": [
+      "cmqe32v5k0009r16tbrws0wvr"
+    ]
+  },
+  {
+    "query": "What are explicit non-goals of Memrider V1?",
+    "expectedChunkIds": [
+      "cmqe32v5k0009r16tbrws0wvr"
+    ]
+  },
+  {
+    "query": "What did I learn about retrieval metrics on Wednesday?",
+    "expectedChunkIds": [
+      "cmqgk4bq900016f6thi7945h3"
+    ]
+  },
+  {
+    "query": "What action item came out of Friday demo Q&A?",
+    "expectedChunkIds": [
+      "cmqgk4bu200036f6tmumn1p28"
+    ]
+  },
+  {
+    "query": "What Postgres indexing advice did I get on Thursday?",
+    "expectedChunkIds": [
+      "cmqgk4bsj00026f6tzwfap2tx"
+    ]
+  },
+  {
+    "query": "Who did I contact about the balcony desk move?",
+    "expectedChunkIds": [
+      "cmqe32v82000dr16tn4sbel9e"
+    ]
+  },
+  {
+    "query": "What problem did I hit while disassembling the IKEA bed?",
+    "expectedChunkIds": [
+      "cmqe32v82000dr16tn4sbel9e"
+    ]
+  },
+  {
+    "query": "What is still missing after the first week in the new apartment?",
+    "expectedChunkIds": [
+      "cmqe32v82000dr16tn4sbel9e"
+    ]
+  },
+  {
+    "query": "What happened to my ankle on the Cedar Ridge hike?",
+    "expectedChunkIds": [
+      "cmqe32v9w000fr16ttfdcpvx4"
+    ]
+  },
+  {
+    "query": "How many miles did I hike on June 15?",
+    "expectedChunkIds": [
+      "cmqe32v9w000fr16ttfdcpvx4"
+    ]
+  },
+  {
+    "query": "What rule did I try at lunch on the ridge?",
+    "expectedChunkIds": [
+      "cmqe32v9w000fr16ttfdcpvx4"
+    ]
   }
 ]

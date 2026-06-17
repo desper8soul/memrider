@@ -1,13 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { SearchDto } from './dto/search.dto';
-import { SearchService } from './search.service';
+import { SearchQuerySchema, type SearchQueryInput } from '@memrider/shared';
+import { ZodValidationPipe } from '../common/zod-validation.pipe';
+import { SearchService } from '@memrider/journal';
 
 @Controller('search')
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
   @Post()
-  async query(@Body() dto: SearchDto) {
-    return this.searchService.search(dto.query, dto.topK ?? 5);
+  async query(@Body(new ZodValidationPipe(SearchQuerySchema)) body: SearchQueryInput) {
+    return this.searchService.search(body.query, body.topK ?? 5);
   }
 }

@@ -4,23 +4,41 @@
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib": ["./dist/lib/index.d.ts"]
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "default": "./dist/lib/index.js"
+    }
+  },
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
     "push": "prisma db push",
-    "seed": "tsx prisma/seed.ts",
     "build": "tsc && prisma generate"
   },
   "dependencies": {
+    "@nestjs/common": "^10.4.15",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "dotenv": "^16.4.7",
     "pg": "^8.21.0"
   },
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0"
+  },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/pg": "^8.20.0",
-    "@xenova/transformers": "catalog:",
     "prisma": "^7.8.0",
     "tsx": "catalog:",
     "typescript": "catalog:"

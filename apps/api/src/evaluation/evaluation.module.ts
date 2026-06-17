@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { RetrievalService } from '../retrieval/retrieval.service';
+import { JournalModule } from '@memrider/journal';
 import { EvaluationController } from './evaluation.controller';
-import { EvaluationService } from './evaluation.service';
 
 @Module({
+  imports: [JournalModule],
   controllers: [EvaluationController],
-  providers: [EvaluationService, RetrievalService],
-  exports: [EvaluationService],
 })
 export class EvaluationModule {}

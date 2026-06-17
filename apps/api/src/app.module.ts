@@ -1,24 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './database/database.module';
-import { EmbeddingsModule } from './embeddings/embeddings.module';
-import { PromptsModule } from './prompts/prompts.module';
+import { JournalModule } from '@memrider/journal';
+import { LoggerModule } from '@memrider/shared/logging';
 import { EntriesModule } from './entries/entries.module';
-import { SearchModule } from './search/search.module';
 import { EvaluationModule } from './evaluation/evaluation.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env', '../../.env'],
-    }),
-    DatabaseModule,
-    EmbeddingsModule,
-    PromptsModule,
-    EntriesModule,
-    SearchModule,
-    EvaluationModule,
-  ],
+  imports: [LoggerModule, JournalModule, EntriesModule, SearchModule, EvaluationModule],
 })
 export class AppModule {}

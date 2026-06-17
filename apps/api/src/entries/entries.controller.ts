@@ -1,35 +1,45 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CreateEntryDto } from './dto/create-entry.dto';
-import { EntriesService } from './entries.service';
+import {
+  CreateEntryResponseSchema,
+  CreateEntrySchema,
+  JournalEntryDetailSchema,
+  JournalEntryListItemSchema,
+  type CreateEntryInput,
+} from '@memrider/shared';
+import { ZodValidationPipe } from '../common/zod-validation.pipe';
+import { EntriesService } from '@memrider/journal';
 
 @Controller('entries')
 export class EntriesController {
-  constructor(private readonly entries: EntriesService) {}
+  constructor(private readonly entriesService: EntriesService) {}
 
   @Post()
-  async create(@Body() dto: CreateEntryDto) {
-    const { entry, chunkIds } = await this.entries.create(dto.content);
-    return {
+  async create(@Body(new ZodValidationPipe(CreateEntrySchema)) body: CreateEntryInput) {
+    const { entry, chunkIds } = await this.entriesService.create(body.content);
+    return CreateEntryResponseSchema.parse({
       id: entry.id,
       content: entry.content,
       createdAt: entry.createdAt,
       chunkIds,
-    };
+    });
   }
 
   @Get()
   async list() {
-    const entries = await this.entries.findAll();
-    return entries.map((e: { id: string; content: string; createdAt: Date; chunks: unknown[] }) => ({
-      id: e.id,
-      content: e.content,
-      createdAt: e.createdAt,
-      chunkCount: e.chunks.length,
-    }));
+    const entries = await this.entriesService.findAll();
+    return entries.map((e) =>
+      JournalEntryListItemSchema.parse({
+        id: e.id,
+        content: e.content,
+        createdAt: e.createdAt,
+        chunkCount: e.chunks.length,
+      }),
+    );
   }
 
   @Get(':id')
   async get(@Param('id') id: string) {
-    return this.entries.findOne(id);
+    const entry = await this.entriesService.findOne(id);
+    return entry ? JournalEntryDetailSchema.parse(entry) : null;
   }
 }

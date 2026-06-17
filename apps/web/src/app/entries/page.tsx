@@ -1,17 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { JournalEntryListItem } from '@memrider/shared/schemas';
 import { listEntries } from '@/lib/api';
 
-type Entry = {
-  id: string;
-  content: string;
-  createdAt: string;
-  chunkCount: number;
-};
-
 export default function EntriesPage() {
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<JournalEntryListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

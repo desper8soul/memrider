@@ -1,24 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import type { SearchResponse } from '@memrider/shared/schemas';
 import { searchMemories } from '@/lib/api';
-
-type SearchResult = {
-  answer: string;
-  supportingChunkIds: string[];
-  confidence: string;
-  retrieved: Array<{
-    id: string;
-    content: string;
-    similarity: number;
-    createdAt: string;
-  }>;
-  meta: { latencyMs: number };
-};
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
-  const [result, setResult] = useState<SearchResult | null>(null);
+  const [result, setResult] = useState<SearchResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

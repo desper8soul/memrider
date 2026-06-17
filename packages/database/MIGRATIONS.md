@@ -33,7 +33,7 @@ Open the new `prisma/migrations/<timestamp>_describe_your_change/migration.sql`.
 ### 3. Edit the SQL before applying
 
 - **Remove** any `DROP INDEX` on `chunks_embedding_hnsw_idx` (unless you really intend to drop it).
-- **Add** pgvector/HNSW SQL here if needed (see `20250520100000_init` or `restore_chunks_embedding_hnsw_idx`).
+- **Add** pgvector/HNSW SQL here if needed (see `20250520100000_init`).
 
 ### 4. Apply
 
@@ -80,4 +80,4 @@ npx prisma migrate status
 
 ## Folder names
 
-Migration directory names are part of history (`20260521082614_add_entry_tags`). Renaming folders after apply breaks Prisma’s match with `_prisma_migrations` — don’t rename applied migrations; add a new one instead.
+Migration directory names are part of history (`20250520100000_init`). Renaming folders after apply breaks Prisma’s match with `_prisma_migrations` — don’t rename applied migrations; add a new one instead.

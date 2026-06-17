@@ -1,19 +1,21 @@
 {
   "name": "memrider",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "pnpm run --parallel dev",
     "dev:api": "pnpm --filter @memrider/api dev",
     "dev:web": "pnpm --filter @memrider/web dev",
     "build": "pnpm run -r build",
-    "test": "pnpm run -r test",
+    "test": "pnpm --filter @memrider/journal test",
     "db:generate": "pnpm --filter @memrider/database generate",
     "db:migrate": "pnpm --filter @memrider/database migrate",
+    "db:deploy": "pnpm --filter @memrider/database migrate:deploy",
     "db:push": "pnpm --filter @memrider/database push",
     "eval": "pnpm --filter @memrider/api eval"
   },
   "engines": {
-    "node": ">=20.19"
+    "node": ">=24"
   },
   "packageManager": "pnpm@11.5.1"
 }
