@@ -14,6 +14,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # prisma.config.ts requires DATABASE_URL; generate does not connect to the DB.
+      DATABASE_URL: postgresql://memrider:memrider@localhost:5432/memrider?schema=public
 
     steps:
       - name: Checkout

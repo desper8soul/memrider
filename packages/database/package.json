@@ -24,7 +24,7 @@
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "push": "prisma db push",
-    "build": "tsc && prisma generate"
+    "build": "prisma generate && tsc"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
