@@ -45,7 +45,7 @@
     "expectedChunkIndexes": [1]
   },
   {
-    "query": "What action item came out of Friday demo Q&A?",
+    "query": "What memory deletion action item came out of Friday demo Q&A?",
     "seedKey": "conference-retro-week",
     "expectedChunkIndexes": [3]
   },
