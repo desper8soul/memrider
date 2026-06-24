@@ -27,6 +27,9 @@ env:
   PROMPT_VERSION: v1
   PROMPTS_DIR: ../../packages/journal/prompt-registry
   RUN_LIVE_EVAL: 'true'
+  AUTH_PROVIDER: cognito
+  COGNITO_USER_POOL_ID: us-east-1_testpool
+  COGNITO_CLIENT_ID: test-client-id
 
 jobs:
   build-and-test:

@@ -22,7 +22,7 @@ export class RetrievalService {
     private readonly embeddingsService: EmbeddingService,
   ) {}
 
-  async search(query: string, topK = 5): Promise<RetrievedChunk[]> {
+  async search(userId: string, query: string, topK = 5): Promise<RetrievedChunk[]> {
     const vector = await this.embeddingsService.embed(query);
     const literal = this.embeddingsService.toVectorLiteral(vector);
     const candidateLimit = retrievalCandidateLimit(topK);
@@ -47,6 +47,7 @@ export class RetrievalService {
       FROM chunks c
       JOIN journal_entries e ON e.id = c.entry_id
       WHERE c.embedding IS NOT NULL
+        AND e.user_id = ${userId}
       ORDER BY c.embedding <=> ${literal}::vector
       LIMIT ${candidateLimit}
     `;

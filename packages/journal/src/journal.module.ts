@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { AppConfigModule } from '@memrider/shared/config';
 import { LoggerModule } from '@memrider/shared/logging';
 import { ChunkingService } from "./chunks/chunking.service";
 import { ChunksService } from "./chunks/chunks.service";
@@ -12,11 +11,11 @@ import { PromptsModule } from "./prompts/prompts.module";
 import { RagService } from "./rag/rag.service";
 import { RetrievalService } from "./retrieval/retrieval.service";
 import { SearchService } from "./search/search.service";
+import { UsersService } from "./users/users.service";
 
 @Module({
   imports: [
     LoggerModule,
-    AppConfigModule,
     PrismaModule,
     EmbeddingsModule,
     PromptsModule,
@@ -30,6 +29,7 @@ import { SearchService } from "./search/search.service";
     RagService,
     SearchService,
     EvaluationService,
+    UsersService,
   ],
   exports: [
     ChunkingService,
@@ -40,6 +40,7 @@ import { SearchService } from "./search/search.service";
     RagService,
     SearchService,
     EvaluationService,
+    UsersService,
   ],
 })
 export class JournalModule {}

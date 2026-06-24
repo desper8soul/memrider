@@ -68,14 +68,20 @@ packages/
 docker compose up -d
 ```
 
-- Postgres
-- pgAdmin (see env vars for url and credentials)
+- Postgres + pgAdmin (see `docker-compose.yml` for credentials)
+- **AWS Cognito (auth):** one-time Terraform setup — see [infra/README.md](infra/README.md)
 
 ### 2. Install & migrate
 
 ```bash
 cp .env.example .env
 pnpm install
+# Cognito (once per AWS account) — see infra/README.md
+cp infra/bootstrap/terraform.tfvars.example infra/bootstrap/terraform.tfvars
+pnpm infra:bootstrap
+cp infra/stacks/cognito/env/dev.tfvars.example infra/stacks/cognito/env/dev.tfvars
+pnpm cognito:setup
+pnpm cognito:user you@example.com 'YourDevPassword1!'
 pnpm db:generate
 pnpm db:deploy
 ```
@@ -109,10 +115,10 @@ pnpm dev
 
 | Method | Path                    | Description                      |
 | ------ | ----------------------- | -------------------------------- |
+| `GET`  | `/auth/me`              | Current user (requires auth)     |
 | `POST` | `/entries`              | Store entry, chunk, embed, index |
 | `GET`  | `/entries`              | List entries                     |
 | `POST` | `/search`               | RAG: retrieve + Bedrock answer   |
-| `POST` | `/evaluation/retrieval` | Retrieval hit-rate eval          |
 
 
 ### Search response (structured)
@@ -155,7 +161,7 @@ pnpm --filter @memrider/api eval:sync-fixture
 
 The script finds each seed entry by its `[memrider-seed:…]` marker, maps `expectedChunkIndexes` to chunk rows (same order as `ChunkingService` output), and overwrites `retrieval-eval.json`. Without this step, live eval compares queries against stale chunk IDs from a previous seed.
 
-Live retrieval eval against DB:
+Live retrieval eval against DB (same `search(userId)` path as production; uses baked-in `eval-system-user`, no auth):
 
 ```bash
 RUN_LIVE_EVAL=1 pnpm eval
@@ -186,6 +192,55 @@ To add `v2`, create `v1/` copies, edit, register in `manifest.json`, then set th
 ## Observability
 
 Each `/search` request logs JSON: query, prompt version, retrieved chunk IDs, similarities, system/user prompts, answer, latency.
+
+## Authentication
+
+Per-user memory isolation via a **provider-agnostic auth layer**. Cognito is the current adapter (infra); domain code only sees `AuthenticatedUser { id, email, roles }`.
+
+```
+[NestJS API]
+   AuthGuard → AuthService → AuthTokenVerifier
+                                └── CognitoAuthProvider
+   UsersService → users(auth_provider, external_user_id, email)
+```
+
+> **Cloud dev parity:** local dev uses a real AWS Cognito dev User Pool. Full Terraform workflow: [infra/README.md](infra/README.md). Eval runs via CLI (`pnpm eval`), not HTTP.
+
+### Quick reference
+
+| Step | Command |
+| ---- | ------- |
+| Bootstrap state (once / account) | `pnpm infra:bootstrap` |
+| Provision dev Cognito → `.env` | `pnpm cognito:setup` |
+| Create login | `pnpm cognito:user you@example.com 'YourDevPassword1!'` |
+
+### How it works
+
+| Component | Role |
+| --------- | ---- |
+| **AuthService** | Domain auth; maps token → `AuthenticatedUser` |
+| **CognitoAuthProvider** | JWT verify + claim mapping (`cognito:groups` → `roles`) |
+| **users table** | `auth_provider` + `external_user_id` (not Cognito-specific columns) |
+| **OAuthClient (web)** | `cognito-oauth.client.ts` adapter; pages call `getOAuthClient()` |
+
+```mermaid
+flowchart LR
+  Browser --> Web[Next.js localhost:3000]
+  Web -->|OAuth redirect| Cognito[AWS Cognito Hosted UI]
+  Cognito -->|code| Callback["/auth/callback"]
+  Callback -->|access token cookie| Web
+  Web -->|Bearer JWT| API[NestJS API]
+  API -->|JWKS verify| Cognito
+  API --> DB[(Postgres user_id scope)]
+```
+
+### Production / staging
+
+See [infra/README.md](infra/README.md) → *Staging and production*. Sync secrets via your deployment platform (not root `.env`).
+
+Add Google/Facebook: extend `infra/modules/cognito` with `aws_cognito_identity_provider` resources, or configure in AWS Console.
+
+Eval seed entries attach to migration-seeded `eval-system-user` (FK only). Retrieval eval uses the same scoped `search(userId)` as production — no OAuth.
 
 ## Bedrock
 

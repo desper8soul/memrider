@@ -11,6 +11,7 @@
     "eval:sync-fixture": "tsx src/evaluation/sync-retrieval-eval-fixture.ts"
   },
   "dependencies": {
+    "@memrider/auth": "workspace:*",
     "@memrider/database": "workspace:*",
     "@memrider/journal": "workspace:*",
     "@memrider/shared": "workspace:*",

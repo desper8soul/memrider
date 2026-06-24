@@ -51,6 +51,7 @@ export class RagService {
   ) {}
 
   async answer(
+    userId: string,
     query: string,
     topK = 5,
   ): Promise<{
@@ -59,7 +60,7 @@ export class RagService {
     log: RagPipelineLog;
   }> {
     const started = Date.now();
-    const retrieved = await this.retrievalService.search(query, topK);
+    const retrieved = await this.retrievalService.search(userId, query, topK);
 
     if (!retrieved.length) {
       const log = this.buildLog({

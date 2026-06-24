@@ -1,0 +1,6 @@
+export { AuthModule } from './auth.module';
+export { AuthService } from './auth.service';
+export { AuthGuard } from './auth.guard';
+export { CurrentUser } from './auth.decorators';
+export type { AuthenticatedUser } from './domain/authenticated-user';
+export type { AuthIdentity } from './domain/auth-identity';

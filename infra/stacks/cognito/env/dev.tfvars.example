@@ -1,0 +1,5 @@
+environment   = "dev"
+aws_region    = "eu-central-1"
+pool_name     = "memrider-dev"
+domain_prefix = "memrider-dev-yourname"
+app_url       = "http://localhost:3000"

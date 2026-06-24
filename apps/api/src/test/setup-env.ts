@@ -19,6 +19,9 @@ const requiredTestEnv: Record<string, string> = {
   PROMPT_VERSION: 'v1',
   PROMPTS_DIR: getDefaultPromptsDir(),
   RUN_LIVE_EVAL: 'false',
+  AUTH_PROVIDER: 'cognito',
+  COGNITO_USER_POOL_ID: 'us-east-1_testpool',
+  COGNITO_CLIENT_ID: 'test-client-id',
 };
 
 for (const [key, value] of Object.entries(requiredTestEnv)) {

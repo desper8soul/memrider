@@ -9,8 +9,10 @@ export {
   NodeEnvironment,
   PromptSetName,
   PromptVersion,
+  AuthProviderId,
 } from './config/app-config.enum';
 export { appConfigSchema, type AppConfig } from './config/app-config.schema';
 export { parseAppConfig } from './config/parse-app-config';
 export { AppConfigService } from './config/app-config.service';
 export { createAppConfigServiceFromEnv } from './config/create-app-config-service';
+export { resolveBedrockInvokeModelId } from './bedrock/resolve-bedrock-model-id';

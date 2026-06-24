@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { match } from "ts-pattern";
 
 import {
+  AuthProviderId,
   AwsAuthSchemePreference,
   AwsRegion,
   BedrockModelId,
@@ -48,6 +50,29 @@ export const appConfigSchema = z.object({
   PROMPTS_DIR: z.string().min(1),
 
   RUN_LIVE_EVAL: requiredBooleanEnv,
+
+  AUTH_PROVIDER: z.nativeEnum(AuthProviderId),
+  COGNITO_USER_POOL_ID: z.string(),
+  COGNITO_CLIENT_ID: z.string(),
+}).superRefine((config, ctx) => {
+  match(config.AUTH_PROVIDER)
+    .with(AuthProviderId.Cognito, () => {
+      if (!config.COGNITO_USER_POOL_ID) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "COGNITO_USER_POOL_ID is required when AUTH_PROVIDER=cognito",
+          path: ["COGNITO_USER_POOL_ID"],
+        });
+      }
+      if (!config.COGNITO_CLIENT_ID) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "COGNITO_CLIENT_ID is required when AUTH_PROVIDER=cognito",
+          path: ["COGNITO_CLIENT_ID"],
+        });
+      }
+    })
+    .exhaustive();
 });
 
 export type AppConfig = z.infer<typeof appConfigSchema>;

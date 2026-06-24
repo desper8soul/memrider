@@ -9,16 +9,17 @@ export class EntriesService {
     private readonly chunksService: ChunksService,
   ) {}
 
-  async create(content: string) {
+  async create(userId: string, content: string) {
     const entry = await this.prismaService.client.journalEntry.create({
-      data: { content },
+      data: { userId, content },
     });
     const chunkIds = await this.chunksService.createForEntry(entry.id, content);
     return { entry, chunkIds };
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     return this.prismaService.client.journalEntry.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' },
       include: {
         chunks: { select: { id: true, index: true }, orderBy: { index: 'asc' } },
@@ -26,9 +27,9 @@ export class EntriesService {
     });
   }
 
-  async findOne(id: string) {
-    return this.prismaService.client.journalEntry.findUnique({
-      where: { id },
+  async findOne(userId: string, id: string) {
+    return this.prismaService.client.journalEntry.findFirst({
+      where: { id, userId },
       include: { chunks: { orderBy: { index: 'asc' } } },
     });
   }

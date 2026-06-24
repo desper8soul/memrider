@@ -1,0 +1,57 @@
+/* Cognito Hosted UI — aligned with Memrider web accent colors */
+.logo-customizable {
+  max-width: 72%;
+  max-height: 28%;
+}
+
+.banner-customizable {
+  padding: 28px 0 18px;
+  background-color: #0f1117;
+}
+
+.label-customizable {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.textDescription-customizable {
+  color: #64748b;
+}
+
+.inputField-customizable {
+  border-color: #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+}
+
+.inputField-customizable:focus {
+  border-color: #6ea8fe;
+  outline-color: #6ea8fe;
+}
+
+.submitButton-customizable {
+  background-color: #3d5a99;
+  border-radius: 8px;
+  border-width: 0;
+  font-weight: 600;
+}
+
+.submitButton-customizable:hover {
+  background-color: #6ea8fe;
+}
+
+.errorMessage-customizable {
+  color: #b91c1c;
+}
+
+.idpButton-customizable {
+  border-radius: 8px;
+}
+
+.legalText-customizable {
+  color: #94a3b8;
+}
+
+.background-customizable {
+  background-color: #f8fafc;
+}

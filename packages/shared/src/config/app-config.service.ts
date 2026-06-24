@@ -58,4 +58,18 @@ export class AppConfigService {
       runLiveEval: this.configService.get("RUN_LIVE_EVAL", { infer: true }),
     };
   }
+
+  get auth() {
+    return {
+      provider: this.configService.get("AUTH_PROVIDER", { infer: true }),
+      cognito: {
+        userPoolId: this.configService.get("COGNITO_USER_POOL_ID", {
+          infer: true,
+        }),
+        clientId: this.configService.get("COGNITO_CLIENT_ID", {
+          infer: true,
+        }),
+      },
+    };
+  }
 }

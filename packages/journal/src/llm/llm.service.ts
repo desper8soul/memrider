@@ -4,7 +4,11 @@ import {
   InvokeModelCommand,
 } from '@aws-sdk/client-bedrock-runtime';
 import { Injectable } from '@nestjs/common';
-import { AppConfigService, MemoryAnswerSchema } from '@memrider/shared';
+import {
+  AppConfigService,
+  MemoryAnswerSchema,
+  resolveBedrockInvokeModelId,
+} from '@memrider/shared';
 import { AppLogger } from '@memrider/shared/logging';
 
 export interface LlmSynthesisInput {
@@ -35,10 +39,11 @@ export class LlmService {
     raw: string;
     parsed: ReturnType<typeof MemoryAnswerSchema.parse>;
   }> {
-    const { modelId } = this.appConfigService.bedrock;
+    const { region, modelId } = this.appConfigService.bedrock;
+    const invokeModelId = resolveBedrockInvokeModelId(region, modelId);
 
     const raw = this.client
-      ? await this.invokeBedrock(modelId, input)
+      ? await this.invokeBedrock(invokeModelId, input)
       : this.mockResponse(input.user);
 
     const json = this.extractJson(raw);
