@@ -30,6 +30,8 @@ export enum AwsAuthSchemePreference {
 
 export enum BedrockModelId {
   NovaLiteV1 = "amazon.nova-lite-v1:0",
+  EuNovaLiteV1 = "eu.amazon.nova-lite-v1:0",
+  UsNovaLiteV1 = "us.amazon.nova-lite-v1:0",
 }
 
 export enum PromptSetName {
@@ -38,4 +40,8 @@ export enum PromptSetName {
 
 export enum PromptVersion {
   V1 = "v1",
+}
+
+export enum AuthProviderId {
+  Cognito = "cognito",
 }

@@ -12,6 +12,9 @@ catalogs:
     '@xenova/transformers':
       specifier: ^2.17.2
       version: 2.17.2
+    ts-pattern:
+      specifier: ^5.6.2
+      version: 5.9.0
     tsx:
       specifier: ^4.19.2
       version: 4.22.3
@@ -28,6 +31,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@memrider/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@memrider/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -80,6 +86,9 @@ importers:
       '@memrider/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      dotenv:
+        specifier: ^16.6.1
+        version: 16.6.1
       next:
         specifier: ^15.1.3
         version: 15.5.18(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -99,6 +108,31 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.2
         version: 19.2.3(@types/react@19.2.15)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/auth:
+    dependencies:
+      '@memrider/journal':
+        specifier: workspace:*
+        version: link:../journal
+      '@memrider/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@nestjs/common':
+        specifier: ^10.4.15
+        version: 10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core':
+        specifier: ^10.0.0
+        version: 10.4.22(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      aws-jwt-verify:
+        specifier: ^5.2.1
+        version: 5.2.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.19
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -157,6 +191,9 @@ importers:
       '@xenova/transformers':
         specifier: 'catalog:'
         version: 2.17.2
+      ts-pattern:
+        specifier: 'catalog:'
+        version: 5.9.0
       zod:
         specifier: 'catalog:'
         version: 3.25.76
@@ -179,6 +216,9 @@ importers:
       '@nestjs/config':
         specifier: ^3.3.0
         version: 3.3.0(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
+      ts-pattern:
+        specifier: 'catalog:'
+        version: 5.9.0
       zod:
         specifier: 'catalog:'
         version: 3.25.76
@@ -1536,6 +1576,10 @@ packages:
   assertion-error@2.0.1:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
+
+  aws-jwt-verify@5.2.1:
+    resolution: {integrity: sha512-J+buA4M+qvQDk58WXFBLkDodkEX3DDL1ac5XFQPW3opxAsaLXYu5hYnlSHsaBRDBUXBAn695kE/cw/mdyJKwJg==}
+    engines: {node: '>=18.0.0'}
 
   aws-ssl-profiles@1.1.2:
     resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
@@ -3130,6 +3174,9 @@ packages:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
 
+  ts-pattern@5.9.0:
+    resolution: {integrity: sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg==}
+
   tsconfig-paths-webpack-plugin@4.2.0:
     resolution: {integrity: sha512-zbem3rfRS8BgeNK50Zz5SIQgXzLafiHjOwUAvk/38/o1jHn/V5QAgVUcz884or7WYcPaH3N2CIfUc2u0ul7UcA==}
     engines: {node: '>=10.13.0'}
@@ -4674,6 +4721,8 @@ snapshots:
   array-timsort@1.0.3: {}
 
   assertion-error@2.0.1: {}
+
+  aws-jwt-verify@5.2.1: {}
 
   aws-ssl-profiles@1.1.2: {}
 
@@ -6348,6 +6397,8 @@ snapshots:
   tr46@0.0.3: {}
 
   tree-kill@1.2.2: {}
+
+  ts-pattern@5.9.0: {}
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:

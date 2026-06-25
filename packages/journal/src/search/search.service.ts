@@ -6,8 +6,9 @@ import { RagService } from "../rag/rag.service";
 export class SearchService {
   constructor(private readonly ragService: RagService) {}
 
-  async search(query: string, topK = 5) {
+  async search(userId: string, query: string, topK = 5) {
     const { result, retrieved, log } = await this.ragService.answer(
+      userId,
       query,
       topK,
     );

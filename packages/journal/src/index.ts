@@ -2,6 +2,7 @@ export { JournalModule } from './journal.module';
 export { ChunksService } from './chunks/chunks.service';
 export { EntriesService } from './entries/entries.service';
 export { SearchService } from './search/search.service';
+export { EVAL_SEED_USER_ID } from './evaluation/eval.constants';
 export { EvaluationService } from './evaluation/evaluation.service';
 export type {
   HallucinationCheckResult,
@@ -10,4 +11,5 @@ export type {
 export { RetrievalService } from './retrieval/retrieval.service';
 export type { RetrievedChunk } from './retrieval/retrieval.service';
 export { EmbeddingService } from './embeddings/embedding.service';
+export { UsersService } from './users/users.service';
 export { getDefaultPromptsDir } from './paths';

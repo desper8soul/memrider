@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "pnpm run --parallel dev",
+    "predev": "bash scripts/cognito-check.sh",
     "dev:api": "pnpm --filter @memrider/api dev",
     "dev:web": "pnpm --filter @memrider/web dev",
     "build": "pnpm run -r build",
@@ -12,7 +13,12 @@
     "db:migrate": "pnpm --filter @memrider/database migrate",
     "db:deploy": "pnpm --filter @memrider/database migrate:deploy",
     "db:push": "pnpm --filter @memrider/database push",
-    "eval": "pnpm --filter @memrider/api eval"
+    "eval": "pnpm --filter @memrider/api eval",
+    "infra:bootstrap": "bash scripts/terraform-bootstrap-apply.sh",
+    "cognito:setup": "bash scripts/terraform-cognito-apply.sh dev",
+    "cognito:sync-env": "bash scripts/terraform-cognito-sync-env.sh dev",
+    "cognito:user": "bash scripts/cognito-create-dev-user.sh",
+    "cognito:check": "bash scripts/cognito-check.sh"
   },
   "engines": {
     "node": ">=24"

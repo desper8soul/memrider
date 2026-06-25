@@ -19,7 +19,7 @@ describe('RagService', () => {
       createMockAppLogger(),
     );
 
-    const { result, retrieved } = await rag.answer('When was I happy?', 5);
+    const { result, retrieved } = await rag.answer('user-1', 'When was I happy?', 5);
 
     expect(retrieved).toEqual([]);
     expect(result.confidence).toBe('low');
@@ -67,7 +67,7 @@ describe('RagService', () => {
       createMockAppLogger(),
     );
 
-    const { result } = await rag.answer('mood?', 5);
+    const { result } = await rag.answer('user-1', 'mood?', 5);
 
     expect(result.supportingChunkIds).toEqual(['c1']);
     expect(result.confidence).toBe('high');

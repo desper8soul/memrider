@@ -1,0 +1,5 @@
+environment   = "staging"
+aws_region    = "us-east-1"
+pool_name     = "memrider-staging"
+domain_prefix = "memrider-staging"
+app_url       = "https://staging.example.com"

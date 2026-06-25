@@ -9,12 +9,33 @@ datasource db {
   extensions = [vector]
 }
 
+enum AuthProvider {
+  cognito
+}
+
+model User {
+  id             String         @id @default(cuid())
+  authProvider   AuthProvider   @map("auth_provider")
+  externalUserId String         @map("external_user_id")
+  email          String?
+  createdAt      DateTime       @default(now()) @map("created_at")
+  deletedAt      DateTime?      @map("deleted_at")
+  entries        JournalEntry[]
+
+  @@unique([authProvider, externalUserId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
 model JournalEntry {
   id        String   @id @default(cuid())
+  userId    String   @map("user_id")
   content   String   @db.Text
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   chunks    Chunk[]
 
+  @@index([userId])
   @@map("journal_entries")
 }
 

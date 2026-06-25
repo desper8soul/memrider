@@ -6,6 +6,7 @@ import {
   type RetrievalEvalCase,
 } from "@memrider/shared";
 import { RetrievalService } from '../retrieval/retrieval.service';
+import { EVAL_SEED_USER_ID } from './eval.constants';
 import {
   checkHallucination as checkHallucinationGuard,
   type HallucinationCheckResult,
@@ -34,7 +35,11 @@ export class EvaluationService {
     const results: RetrievalEvalResult[] = [];
 
     for (const c of cases) {
-      const retrieved = await this.retrievalService.search(c.query, topK);
+      const retrieved = await this.retrievalService.search(
+        EVAL_SEED_USER_ID,
+        c.query,
+        topK,
+      );
       const retrievedChunkIds = retrieved.map((r) => r.id);
       const hit = c.expectedChunkIds.some((id) =>
         retrievedChunkIds.includes(id),

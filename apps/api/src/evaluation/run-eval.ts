@@ -6,6 +6,7 @@ import { loadEnv } from '@memrider/database';
 import { PrismaModule } from '@memrider/database/lib';
 import { EvaluationService, JournalModule } from '@memrider/journal';
 import { AppConfigService } from '@memrider/shared';
+import { AppConfigModule } from '@memrider/shared/config';
 import {
   AppLogger,
   createStandaloneAppLogger,
@@ -19,7 +20,7 @@ loadEnv();
 import retrievalFixture from './fixtures/retrieval-eval.json';
 
 @Module({
-  imports: [LoggerModule, JournalModule, PrismaModule],
+  imports: [AppConfigModule, LoggerModule, JournalModule, PrismaModule],
 })
 class EvalCliModule {}
 

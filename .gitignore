@@ -9,3 +9,18 @@ packages/database/src/generated
 coverage
 .turbo
 *.tsbuildinfo
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+!*.tfvars.example
+**/backend.hcl
+!**/backend.hcl.example

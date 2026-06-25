@@ -77,6 +77,15 @@ export const JournalEntryDetailSchema = z.object({
   chunks: z.array(ChunkDetailSchema),
 });
 
+export const AuthUserSchema = z.object({
+  id: z.string(),
+  email: z.string().nullable(),
+});
+
+export const SyncProfileSchema = z.object({
+  idToken: z.string().min(1),
+});
+
 // --- eval ---
 
 export const RetrievalEvalCaseSchema = z.object({
@@ -96,4 +105,6 @@ export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 export type CreateEntryResponse = z.infer<typeof CreateEntryResponseSchema>;
 export type JournalEntryListItem = z.infer<typeof JournalEntryListItemSchema>;
 export type JournalEntryDetail = z.infer<typeof JournalEntryDetailSchema>;
+export type AuthUser = z.infer<typeof AuthUserSchema>;
+export type SyncProfileInput = z.infer<typeof SyncProfileSchema>;
 export type RetrievalEvalCase = z.infer<typeof RetrievalEvalCaseSchema>;

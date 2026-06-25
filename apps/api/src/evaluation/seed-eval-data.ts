@@ -7,8 +7,10 @@ import { PrismaModule, PrismaService } from "@memrider/database/lib";
 import {
   ChunksService,
   EntriesService,
+  EVAL_SEED_USER_ID,
   JournalModule,
 } from "@memrider/journal";
+import { AppConfigModule } from "@memrider/shared/config";
 import {
   AppLogger,
   createStandaloneAppLogger,
@@ -26,23 +28,27 @@ import {
 loadEnv();
 
 @Module({
-  imports: [LoggerModule, JournalModule, PrismaModule],
+  imports: [AppConfigModule, LoggerModule, JournalModule, PrismaModule],
 })
 class SeedEvalCliModule {}
 
 async function ensureEvalSeedEntry(
   entry: EvalSeedEntry,
+  userId: string,
   entriesService: EntriesService,
   chunksService: ChunksService,
   prismaService: PrismaService,
 ): Promise<string> {
   const prisma = prismaService.client;
   const existing = await prisma.journalEntry.findFirst({
-    where: { content: { contains: seedMarker(entry.key) } },
+    where: {
+      userId,
+      content: { contains: seedMarker(entry.key) },
+    },
   });
 
   if (!existing) {
-    const { entry: created } = await entriesService.create(entry.content);
+    const { entry: created } = await entriesService.create(userId, entry.content);
     return created.id;
   }
 
@@ -74,6 +80,7 @@ async function main() {
   for (const entry of EVAL_SEED_ENTRIES) {
     const entryId = await ensureEvalSeedEntry(
       entry,
+      EVAL_SEED_USER_ID,
       entriesService,
       chunksService,
       prismaService,

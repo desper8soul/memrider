@@ -1,0 +1,5 @@
+environment   = "prod"
+aws_region    = "us-east-1"
+pool_name     = "memrider-prod"
+domain_prefix = "memrider-prod"
+app_url       = "https://app.example.com"
