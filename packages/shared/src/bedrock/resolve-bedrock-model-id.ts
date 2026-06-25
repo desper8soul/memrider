@@ -1,6 +1,6 @@
 import { match } from "ts-pattern";
 
-import { AwsRegion, BedrockModelId } from "../config/app-config.enum";
+import { AwsRegion, BedrockModelId } from "../config/common/app-config.enum";
 
 function resolveNovaLiteProfileForRegion(region: AwsRegion): BedrockModelId {
   return match(region)

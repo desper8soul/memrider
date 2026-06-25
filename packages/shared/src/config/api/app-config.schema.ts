@@ -12,7 +12,7 @@ import {
   NodeEnvironment,
   PromptSetName,
   PromptVersion,
-} from "./app-config.enum";
+} from "../common/app-config.enum";
 
 const requiredBooleanEnv = z
   .nativeEnum(BooleanEnv)

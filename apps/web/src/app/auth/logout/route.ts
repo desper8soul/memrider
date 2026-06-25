@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { ACCESS_TOKEN_COOKIE, getAppUrl, getOAuthClient } from '@/lib/auth';
+import { ACCESS_TOKEN_COOKIE, getOAuthClient } from '@/lib/auth';
 
 export async function GET() {
   const cookieStore = await cookies();

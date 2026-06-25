@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { ACCESS_TOKEN_COOKIE } from '@/lib/auth';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+import { webConfig } from '@/lib/config/web-config';
 
 async function proxyRequest(
   request: NextRequest,
@@ -10,7 +9,7 @@ async function proxyRequest(
   method: string,
 ) {
   const path = pathSegments.join('/');
-  const targetUrl = new URL(`${API_URL}/${path}`);
+  const targetUrl = new URL(`${webConfig.apiUrl}/${path}`);
   request.nextUrl.searchParams.forEach((value, key) => {
     targetUrl.searchParams.set(key, value);
   });

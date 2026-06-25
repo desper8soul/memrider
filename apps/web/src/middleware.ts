@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { ACCESS_TOKEN_COOKIE } from '@/lib/auth';
+import { ACCESS_TOKEN_COOKIE } from '@/lib/auth/constants';
 
 const PROTECTED_PREFIXES = ['/write', '/search', '/entries'];
 

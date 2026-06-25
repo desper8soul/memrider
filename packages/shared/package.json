@@ -7,7 +7,10 @@
   "typesVersions": {
     "*": {
       "config": ["./dist/config/index.d.ts"],
+      "config/api": ["./dist/config/api/index.d.ts"],
+      "config/common": ["./dist/config/common/index.d.ts"],
       "logging": ["./dist/logging/index.d.ts"],
+      "web-config": ["./dist/config/web/index.d.ts"],
       "schemas": ["./dist/schemas.d.ts"]
     }
   },
@@ -24,9 +27,21 @@
       "types": "./dist/config/index.d.ts",
       "default": "./dist/config/index.js"
     },
+    "./config/api": {
+      "types": "./dist/config/api/index.d.ts",
+      "default": "./dist/config/api/index.js"
+    },
+    "./config/common": {
+      "types": "./dist/config/common/index.d.ts",
+      "default": "./dist/config/common/index.js"
+    },
     "./logging": {
       "types": "./dist/logging/index.d.ts",
       "default": "./dist/logging/index.js"
+    },
+    "./web-config": {
+      "types": "./dist/config/web/index.d.ts",
+      "default": "./dist/config/web/index.js"
     }
   },
   "scripts": {

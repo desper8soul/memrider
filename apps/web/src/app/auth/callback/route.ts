@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { webConfig } from '@/lib/config/web-config';
 import {
   ACCESS_TOKEN_COOKIE,
   decodeOAuthState,
-  getAppUrl,
   getOAuthClient,
 } from '@/lib/auth';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
@@ -36,7 +34,7 @@ export async function GET(request: NextRequest) {
       maxAge: 60 * 60,
     });
 
-    const syncResponse = await fetch(`${API_URL}/auth/sync`, {
+    const syncResponse = await fetch(`${webConfig.apiUrl}/auth/sync`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     const nextPath = decodeOAuthState(state);
-    return NextResponse.redirect(new URL(nextPath, getAppUrl()));
+    return NextResponse.redirect(new URL(nextPath, webConfig.appUrl));
   } catch (err) {
     const message = err instanceof Error ? err.message : 'auth_failed';
     return NextResponse.redirect(
